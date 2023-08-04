@@ -82,7 +82,7 @@ def mutate_function(args, meta, func):
                     else:
                         orig_ins = f"nop{'; nop'*ins_to_skip}"
 
-                    same_ins = mutation == '' or mutation == orig_ins
+                    same_ins = mutation in ['', orig_ins]
                     if args.random == 'n' and same_ins:
                         continue
 
@@ -106,7 +106,7 @@ def mutate_function(args, meta, func):
 
 def patch_executable(args, r2, meta, mutations, logger=None):
     log('info', f"Writing mutations to {args.output}")
-    for idx, mutation in enumerate(mutations):
+    for mutation in mutations:
         r2.cmd(f"wx {mutation['bytes']} @{mutation['offset']}")
 
     log('info',
@@ -239,13 +239,8 @@ def parse_arguments():
         global _GREEN, _BLUE, _YELLOW, _RED, _CLEANC
         _GREEN = _BLUE = _YELLOW = _RED = _CLEANC = _NC
 
-    # Set args.output default value.
     if isinstance(args.output, list):
-        if not args.batch:
-            args.output = args.output[0]  # mutations/mutated.bin
-        else:
-            args.output = args.output[1]  # mutations
-
+        args.output = args.output[0] if not args.batch else args.output[1]
     if args.debug:
         log('debug', "Parsing arguments.")
 

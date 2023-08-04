@@ -49,8 +49,10 @@ def scan_phase(args, api, logger, samples):
 def results_phase(args, api, logger):
     sample_hash = re.compile(r'file/(.*?)/')
     with open(args.input, 'r') as f:
-        samples = [(hashes.split('\t')[0], sample_hash.search(hashes).group(1))
-                   for hashes in f.read().splitlines()]
+        samples = [
+            (hashes.split('\t')[0], sample_hash.search(hashes)[1])
+            for hashes in f.read().splitlines()
+        ]
     with alive_bar(
             total=len(samples), title="[SCAN] Samples") as bar:
         for name, sample in samples:

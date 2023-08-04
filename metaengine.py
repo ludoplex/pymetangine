@@ -57,33 +57,29 @@ class MetaEngine:
                 elif choice == 2:
                     return 'pushad; popad'
                 elif choice == 3:
-                    return 'push {}; pop {}'.format(reg, reg)
+                    return f'push {reg}; pop {reg}'
                 else:
-                    return '{}; {}'.format(self.gen_nops(1),
-                                           self.gen_nops(1))
+                    return f'{self.gen_nops(1)}; {self.gen_nops(1)}'
             elif size == 3:
                 choice = random.randint(1, 3)
                 rnd_ins_1B = random.choice(
                     ['pushfd', 'popfd', 'pushad', 'popad',
                      'push {}', 'pop {}', 'inc {}', 'dec {}'])
                 if choice == 1:
-                    return 'jmp {}; {}'.format(3, rnd_ins_1B.format(reg))
+                    return f'jmp 3; {rnd_ins_1B.format(reg)}'
                 elif choice == 2:
-                    return '{}; {}'.format(self.gen_nops(1),
-                                           self.gen_nops(2))
+                    return f'{self.gen_nops(1)}; {self.gen_nops(2)}'
                 else:
-                    return '{}; {}'.format(self.gen_nops(2),
-                                           self.gen_nops(1))
+                    return f'{self.gen_nops(2)}; {self.gen_nops(1)}'
         elif self.bits == 64:
             if size == 2:
                 choice = random.randint(1, 3)
                 if choice == 1:
                     return 'pushfq; popfq'
                 elif choice == 2:
-                    return 'push {}; pop {}'.format(reg, reg)
+                    return f'push {reg}; pop {reg}'
                 else:
-                    return '{}; {}'.format(self.gen_nops(1),
-                                           self.gen_nops(1))
+                    return f'{self.gen_nops(1)}; {self.gen_nops(1)}'
             elif size == 3:
                 choice = random.randint(1, 4)
                 # nop; push; pop already in case no-op_1B; no-op_2B
@@ -94,31 +90,29 @@ class MetaEngine:
                     return 'push {0}; {1}; pop {0}'.format(
                         reg, self.gen_nops(1))
                 elif choice == 2:
-                    return 'pushfq; {}; popfq'.format(self.gen_nops(1))
+                    return f'pushfq; {self.gen_nops(1)}; popfq'
                 elif choice == 3:
-                    return '{}; {}'.format(self.gen_nops(1), self.gen_nops(2))
+                    return f'{self.gen_nops(1)}; {self.gen_nops(2)}'
                 else:
-                    return '{}; {}'.format(self.gen_nops(2), self.gen_nops(1))
+                    return f'{self.gen_nops(2)}; {self.gen_nops(1)}'
             elif size == 4:
                 choice = random.randint(1, 2)
-                if choice == 1:
-                    rnd_ins_1B_x2 = random.sample(
-                        ['push {}', 'pop {}', 'pushfq', 'popfq'], 2)
-                    rnd_ins_2B = random.choice(
-                        ['mov {}, {}', 'test {}, {}', 'cmp {}, {}',
-                         'or {}, {}', 'sub {}, {}', 'inc {}',
-                         'xor {}, {}', 'and {}, {}', 'dec {}'])
-                    rnd = random.randint(1, 2)
-                    if rnd == 1:
-                        reg2 = random.choice(self.regs)
-                        rnd_ins = rnd_ins_1B_x2.format(reg, reg2)
-                    else:
-                        reg_32b = ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi']
-                        rnd_ins = rnd_ins_2B.format(random.choice(reg_32b))
-                    return 'jmp {}; {}'.format(4, rnd_ins)
+                if choice != 1:
+                    return f'{self.gen_nops(2)}; {self.gen_nops(2)}'
+                rnd_ins_1B_x2 = random.sample(
+                    ['push {}', 'pop {}', 'pushfq', 'popfq'], 2)
+                rnd_ins_2B = random.choice(
+                    ['mov {}, {}', 'test {}, {}', 'cmp {}, {}',
+                     'or {}, {}', 'sub {}, {}', 'inc {}',
+                     'xor {}, {}', 'and {}, {}', 'dec {}'])
+                rnd = random.randint(1, 2)
+                if rnd == 1:
+                    reg2 = random.choice(self.regs)
+                    rnd_ins = rnd_ins_1B_x2.format(reg, reg2)
                 else:
-                    return '{}; {}'.format(self.gen_nops(2),
-                                           self.gen_nops(2))
+                    reg_32b = ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi']
+                    rnd_ins = rnd_ins_2B.format(random.choice(reg_32b))
+                return f'jmp 4; {rnd_ins}'
 
     def gen_regexp(self):
         self.mutable_ins = frozenset(
